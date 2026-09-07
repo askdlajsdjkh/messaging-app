@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, RedirectCommand, Router } from '@angular/router';
-import { Auth } from './auth';
+import { ServiceAuth } from './service-auth';
 
 
 export const loginGuard: CanActivateFn = (route, state) =>
 {
     const router = inject(Router);
-    const auth = inject(Auth);
+    const auth = inject(ServiceAuth);
 
     if (auth.isLoggedIn())
     {

@@ -1,20 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { AppChat, POSTChatCreate } from '../../../api';
 
 
 @Injectable({
     providedIn: 'root',
 })
-export class Chats
+export class ServiceChats
 {
-    constructor()
-    {
-        //
-    }
-
-
     private readonly http = inject(HttpClient);
 
     //public chatIDs$ = new BehaviorSubject<string[]>([]);

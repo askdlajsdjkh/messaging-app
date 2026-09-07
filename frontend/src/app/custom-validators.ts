@@ -1,34 +1,43 @@
-import { ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 
-export function disallowCharactersValidator(regex: RegExp): ValidatorFn
+export class CustomValidators
 {
-    return (control) =>
+    static noChar(regex: RegExp): ValidatorFn
     {
-        const haveDisallowedCharacters = regex.test(control.value);
+        return (control) =>
+        {
+            const haveDisallowedCharacters = regex.test(control.value);
 
-        if (haveDisallowedCharacters)
+            if (haveDisallowedCharacters)
+            {
+                return {
+                    disallowedCharacters: true,
+                };
+            }
+
+            return null;
+        }
+    }
+
+    /** String should not be empty. */
+    static notEmpty(control: AbstractControl): ValidationErrors | null
+    {
+        return null;
+    }
+
+    static matchPasswords(control: AbstractControl): ValidationErrors | null
+    {
+        const p1 = control.get('password');
+        const p2 = control.get('repeatedPassword');
+
+        if (p1 === null || p2 === null || p1.value.trim() !== p2.value.trim())
         {
             return {
-                disallowedCharacters: true,
+                mismatchedPasswords: true,
             };
         }
 
         return null;
     }
 }
-
-export const matchingPasswordsValidator: ValidatorFn = (control) =>
-{
-    const p1 = control.get('password');
-    const p2 = control.get('repeatedPassword');
-
-    if (p1 === null || p2 === null || p1.value.trim() !== p2.value.trim())
-    {
-        return {
-            mismatchedPasswords: true,
-        };
-    }
-
-    return null;
-};

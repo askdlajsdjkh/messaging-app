@@ -1,36 +1,34 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-import { Auth } from './auth';
-import { DBChatMessage } from '../../../server/lib/db';
 
 
-interface ChatDisplayMessage extends DBChatMessage {
+interface WSMessage {
+    username: string;
+    text: string;
+    timestamp: number;
+}
+
+interface ChatMessage extends WSMessage {
     type : 'message';
 }
-interface ChatDisplayError {
+interface ChatError {
     type : 'error';
     text: string;
     timestamp: number;
 }
 
-export type ChatDisplayContent = ChatDisplayMessage | ChatDisplayError;
+type ChatContent = ChatMessage | ChatError;
 
 
 @Injectable()
-export class Messages
+export class ServiceMessages
 {
-    constructor()
-    {
-        //
-    }
-
-
     private readonly http = inject(HttpClient);
-    private ws$: WebSocketSubject<DBChatMessage> | null = null;
+    private ws$: WebSocketSubject<WSMessage> | null = null;
 
-    public readonly messages$ = new ReplaySubject<ChatDisplayContent>();
+    public readonly messages$ = new ReplaySubject<ChatContent>();
 
 
     public connect(chatId: string)
@@ -52,12 +50,30 @@ export class Messages
             },
             error: (err) =>
             {
+                let errMessage: string;
+
+                if (err instanceof Error)
+                {
+                    errMessage = err.message;
+                }
+                else
+                {
+                    errMessage = String(err)
+                }
+
                 this.messages$.next({
                     type: 'error',
-                    text: String(err),
+                    text: errMessage,
                     timestamp: Date.now(),
                 });
             },
         });
+    }
+
+
+    /** Sends message. */
+    public send(message: string)
+    {
+        //
     }
 }

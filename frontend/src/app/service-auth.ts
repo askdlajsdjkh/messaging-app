@@ -7,17 +7,9 @@ import { AppUser, POSTLogin, POSTLoginResponse } from '../../../api';
 @Injectable({
     providedIn: 'root',
 })
-export class Auth
+export class ServiceAuth
 {
-    constructor()
-    {
-        //
-    }
-
-
     private readonly http = inject(HttpClient);
-
-
 
     private user$?: Observable<AppUser>;
 

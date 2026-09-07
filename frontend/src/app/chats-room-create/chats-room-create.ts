@@ -1,24 +1,24 @@
-import { Component, inject } from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { disallowCharactersValidator } from '../custom-validators';
-import { ErrorMessages } from '../error-messages';
 import { AsyncPipe } from '@angular/common';
-import { Chats } from '../chats';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { ErrorMessages } from '../error-messages';
+import { ServiceChats } from '../service-chats';
+import { CustomValidators } from '../custom-validators';
 
 
 @Component({
-    selector: 'app-chat-create',
+    selector: 'app-chats-room-create',
     imports: [ AsyncPipe, ReactiveFormsModule ],
-    templateUrl: './chat-create.html',
-    styleUrl: './chat-create.css',
+    templateUrl: './chats-room-create.html',
+    styleUrl: './chats-room-create.css',
 })
-export class ChatCreate
+export class ChatsRoomCreate
 {
-    private readonly chats = inject(Chats);
+    private readonly chats = inject(ServiceChats);
 
     public form = new FormGroup({
-        chatName: new FormControl('', [ Validators.required, disallowCharactersValidator(/\s/i) ]),
+        chatName: new FormControl('', [ Validators.required, CustomValidators.noChar(/\s/i) ]),
     });
 
     public errlogs = new ErrorMessages()

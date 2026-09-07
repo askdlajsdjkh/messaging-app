@@ -3,9 +3,8 @@ import { AsyncPipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { Auth } from '../auth';
-import { disallowCharactersValidator } from '../custom-validators';
+import { ServiceAuth } from '../service-auth';
+import { ErrorMessages } from '../error-messages';
 
 
 @Component({
@@ -16,7 +15,7 @@ import { disallowCharactersValidator } from '../custom-validators';
 })
 export class Login
 {
-    private readonly auth = inject(Auth);
+    private readonly auth = inject(ServiceAuth);
     private readonly router = inject(Router);
 
     public form = new FormGroup({
@@ -24,33 +23,33 @@ export class Login
         password: new FormControl('', [ Validators.required ]),
     });
 
-    public errorMessage$ = new BehaviorSubject<string | null>(null);
+    public errlogs = new ErrorMessages();
 
 
     public onSubmit()
     {
         if (this.form.controls.username.invalid || this.form.controls.password.invalid)
         {
-            this.errorMessage$.next('Please, provide valid username and password.');
+            this.errlogs.new('Please, provide valid username and password.');
             return;
         }
 
         this.auth.logIn(this.form.value.username!, this.form.value.password!).subscribe({
             complete: () =>
             {
-                this.errorMessage$.next(null);
-                this.router.navigate([ '/chat' ]);
+                this.errlogs.clear();
+                this.router.navigate([ '/chatsRoom' ]);
             },
             error: (err) =>
             {
                 if (err instanceof HttpErrorResponse && err.statusText)
                 {
-                    this.errorMessage$.next(err.statusText);
+                    this.errlogs.new(err.statusText);
                 }
                 else
                 {
                     console.debug(err);
-                    this.errorMessage$.next('Unknown error occured.');
+                    this.errlogs.new('Unknown error occured.');
                 }
             },
         });

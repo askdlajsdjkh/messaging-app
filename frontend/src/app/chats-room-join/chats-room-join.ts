@@ -1,22 +1,22 @@
 import { AsyncPipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ErrorMessages } from '../error-messages';
 
 
 @Component({
-    selector: 'app-chat-join',
+    selector: 'app-chats-room-join',
     imports: [ AsyncPipe, ReactiveFormsModule ],
-    templateUrl: './chat-join.html',
-    styleUrl: './chat-join.css',
+    templateUrl: './chats-room-join.html',
+    styleUrl: './chats-room-join.css',
 })
-export class ChatJoin
+export class ChatsRoomJoin
 {
     public form = new FormGroup({
         chatName: new FormControl('', [ Validators.required ]),
     });
 
-    public errlogs = new ErrorMessages()
+    public errlogs = new ErrorMessages();
 
 
     public onSubmit()

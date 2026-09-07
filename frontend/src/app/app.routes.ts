@@ -3,10 +3,10 @@ import { loginGuard } from './login-guard';
 import { Home } from './home/home';
 import { Register } from './register/register';
 import { Login } from './login/login';
-import { Chat } from './chat/chat';
-import { ChatCreate } from './chat-create/chat-create';
-import { ChatJoin } from './chat-join/chat-join';
-import { ChatBody } from './chat-body/chat-body';
+import { ChatsRoom } from './chats-room/chats-room';
+import { ChatsRoomCreate } from './chats-room-create/chats-room-create';
+import { ChatsRoomJoin } from './chats-room-join/chats-room-join';
+import { ChatsRoomChat } from './chats-room-chat/chats-room-chat';
 
 
 export const routes: Routes = [
@@ -23,23 +23,23 @@ export const routes: Routes = [
         component: Login,
     },
     {
-        path: 'chat',
-        component: Chat,
+        path: 'chatsRoom',
+        component: ChatsRoom,
         canActivate: [
             loginGuard,
         ],
         children: [
             {
                 path: 'create',
-                component: ChatCreate,
+                component: ChatsRoomCreate,
             },
             {
                 path: 'join',
-                component: ChatJoin,
+                component: ChatsRoomJoin,
             },
             {
                 path: ':chatId',
-                component: ChatBody,
+                component: ChatsRoomChat,
             },
         ],
     },

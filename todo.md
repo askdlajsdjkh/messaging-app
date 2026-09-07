@@ -6,7 +6,7 @@
 
 ## Long-term
 - connect server and frontend
+- change Redis to ???
 
 ## Also (not important)
-- group frontend services/components (?)
 - fix/add styles
