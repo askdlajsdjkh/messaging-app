@@ -17,7 +17,7 @@ export class Chats
 
     private readonly http = inject(HttpClient);
 
-    public chatIDs$ = new BehaviorSubject<string[]>([]);
+    //public chatIDs$ = new BehaviorSubject<string[]>([]);
 
 
     public addNewChat(name: string)

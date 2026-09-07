@@ -1,46 +1,55 @@
-import { Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { disallowCharactersValidator } from '../custom-validators';
+import { ErrorMessages } from '../error-messages';
+import { AsyncPipe } from '@angular/common';
 import { Chats } from '../chats';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
     selector: 'app-chat-create',
-    imports: [],
+    imports: [ AsyncPipe, ReactiveFormsModule ],
     templateUrl: './chat-create.html',
     styleUrl: './chat-create.css',
 })
 export class ChatCreate
 {
-    @ViewChild('chatName')
-    private chatName: ElementRef<HTMLInputElement> | null = null;
+    private readonly chats = inject(Chats);
+
+    public form = new FormGroup({
+        chatName: new FormControl('', [ Validators.required, disallowCharactersValidator(/\s/i) ]),
+    });
+
+    public errlogs = new ErrorMessages()
 
 
-    private readonly chatsService = inject(Chats);
-
-
-    public onSubmit(ev: SubmitEvent)
+    public onSubmit()
     {
-        ev.preventDefault();
-
-        const chatName = this.chatName?.nativeElement.value;
-        if (chatName === undefined)
+        if (this.form.controls.chatName.invalid)
         {
-            console.error('Undefined chat name.');
+            this.errlogs.new('Please, provide valid chat name.');
             return;
         }
 
-        this.chatsService.addNewChat(chatName).subscribe((ok) =>
-        {
-            if (ok === null) return;
-
-            if (ok)
+        this.chats.addNewChat(this.form.value.chatName!).subscribe({
+            complete: () =>
             {
-                if (this.chatName === null) return;
-                this.chatName.nativeElement.value = '';
-            }
-            else
+                this.errlogs.clear();
+                //this.router.navigate([ '/' ]);
+            },
+            error: (err) =>
             {
-                //
-            }
+                if (err instanceof HttpErrorResponse && err.statusText)
+                {
+                    this.errlogs.new(err.statusText);
+                }
+                else
+                {
+                    console.debug(err);
+                    this.errlogs.new('Unknown error occured.');
+                }
+            },
         });
     }
 }

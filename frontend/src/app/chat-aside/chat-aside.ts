@@ -4,10 +4,10 @@ import { Auth } from '../auth';
 
 
 @Component({
-  selector: 'app-chat-aside',
-  imports: [],
-  templateUrl: './chat-aside.html',
-  styleUrl: './chat-aside.css',
+    selector: 'app-chat-aside',
+    imports: [],
+    templateUrl: './chat-aside.html',
+    styleUrl: './chat-aside.css',
 })
 export class ChatAside
 {
