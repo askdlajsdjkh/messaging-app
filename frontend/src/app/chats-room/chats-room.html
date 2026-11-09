@@ -1,4 +1,4 @@
-<div class="w-full h-full p-4 flex gap-4 bg-(--app-bg-color)">
+<div class="w-full h-full p-4 flex gap-4">
     <aside class="max-w-70 w-1/5 p-4 flex flex-col rounded-2xl bg-(--app-foreground-color) shadow-md">
         <!-- chat controls buttons -->
         <div class="mt-4 flex flex-col gap-2 text-lg text-(--app-button-text-color)">
@@ -20,7 +20,7 @@
         <div class="mt-4 flex flex-col gap-2">
             @for (chat of chats.chats$ | async; track chat)
             {
-                <button class="px-3 rounded-xl hover:bg-neutral-950/8" (click)="navigateToChat(chat.id)">
+                <button class="px-3 rounded-xl hover:bg-neutral-950/10" (click)="navigateToChat(chat.id)">
                     Chat "{{ chat.name }}"
                 </button>
             }

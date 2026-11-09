@@ -1,3 +1,11 @@
-<div class="w-dvw h-dvh bg-(--app-background-color)">
+<div class="relative w-dvw h-dvh bg-(--app-background-color)">
     <router-outlet />
+
+    @if (modal.component$ | async; as component)
+    {
+        <div class="absolute top-0 left-0 w-full h-full bg-neutral-950/10 backdrop-blur-[1px]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-1/2 p-4 rounded-2xl bg-(--app-foreground-color) shadow-md">
+            <ng-container *ngComponentOutlet="component" />
+        </div>
+    }
 </div>

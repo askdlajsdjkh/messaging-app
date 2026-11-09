@@ -2,6 +2,8 @@ import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ServiceChats } from '../service-chats';
 import { AsyncPipe } from '@angular/common';
+import { ServiceModal } from '../service-modal';
+import { ChatCreateForm } from '../chat-create-form/chat-create-form';
 
 
 @Component({
@@ -21,12 +23,13 @@ export class ChatsRoom
 
     private readonly router = inject(Router);
 
+    private readonly modal = inject(ServiceModal);
     public readonly chats = inject(ServiceChats);
 
 
     public navigateToCreateChat()
     {
-        this.router.navigate([ '/create' ]);
+        this.modal.showModal(ChatCreateForm);
     }
 
     public navigateToJoinChat()

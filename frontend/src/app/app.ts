@@ -1,5 +1,7 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AsyncPipe, NgComponentOutlet } from '@angular/common';
+import { ServiceModal } from './service-modal';
 
 
 @Component({
@@ -7,9 +9,9 @@ import { RouterOutlet } from '@angular/router';
     templateUrl: './app.html',
     styleUrl: './app.css',
     changeDetection: ChangeDetectionStrategy.Eager,
-    imports: [ RouterOutlet ],
+    imports: [ RouterOutlet, NgComponentOutlet, AsyncPipe ],
 })
 export class App
 {
-    protected readonly title = signal('frontend');
+    public readonly modal = inject(ServiceModal);
 }
