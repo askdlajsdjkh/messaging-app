@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, map, Observable, shareReplay, tap } from 'rxjs';
+import { catchError, map, Observable, of, shareReplay, tap } from 'rxjs';
 
 
 @Injectable({
@@ -10,20 +10,40 @@ export class ServiceAuth
 {
     private readonly http = inject(HttpClient);
 
-    private user$?: Observable<DataUser>;
 
-    public getUser(forceRefresh = false): Observable<DataUser>
+    public getToken(): string | null
     {
+        return sessionStorage.getItem('jwttoken');
+    }
+
+    public setToken(token: string | null)
+    {
+        if (token === null)
+        {
+            sessionStorage.removeItem('jwttoken');
+        }
+        else
+        {
+            sessionStorage.setItem('jwttoken', token);
+        }
+    }
+
+
+    private user$?: Observable<APIUser | null>;
+
+    public getUser(forceRefresh = false): Observable<APIUser | null>
+    {
+        const url = '/api/user';
+
         if (forceRefresh || this.user$ === undefined)
         {
-            this.user$ = this.http.get<DataUser>('/api/user', {
+            this.user$ = this.http.get<APIUser>(url, {
                 headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
             }).pipe(
                 shareReplay({ bufferSize: 1, refCount: true }),
-                catchError((err) =>
+                catchError(() =>
                 {
-                    this.user$ = undefined;
-                    throw err;
+                    return of(null);
                 }),
             );
         }
@@ -31,49 +51,66 @@ export class ServiceAuth
         return this.user$;
     }
 
-    /** Returns token if successfull. */
-    private authUser(on: 'register' | 'login', username: string, password: string): Observable<string>
-    {
-        const body = {
-            username,
-            password,
-        };
 
-        return this.http.post<{ token: string }>('/api/' + on,
+    /**
+     * Creates POST request.
+     */
+    private _post(on: 'register' | 'login', username: string, password: string): Observable<boolean>
+    {
+        interface _Res {
+            token: string;
+            error?: string;
+        }
+
+        const url = '/api/' + on;
+        const body = { username, password };
+
+        return this.http.post<_Res>(url, body, {
+            headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+        }).pipe(
+            map((o) =>
             {
-                username,
-                password,
-            },
+                this.setToken(o.token);
+                return true;
+            }),
+            catchError((err) =>
             {
-                headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
-            }
-        ).pipe(
-            map(o => o.token),
-            tap((token) =>
-            {
-                sessionStorage.setItem('jwttoken', token);
+                console.debug(`POST request on "${url}" have failed:`, err);
+                return of(false);
             }),
         );
     }
 
-    public signIn(username: string, password: string): Observable<string>
+    /**
+     * @returns boolean indicating if signing in was successfull.
+     */
+    public signIn(username: string, password: string): Observable<boolean>
     {
-        return this.authUser('register', username, password);
+        return this._post('register', username, password);
     }
 
-    public logIn(username: string, password: string): Observable<string>
+    /**
+     * @returns boolean indicating if logging in was successfull.
+     */
+    public logIn(username: string, password: string): Observable<boolean>
     {
-        return this.authUser('login', username, password);
+        return this._post('login', username, password);
     }
 
     public logOut()
     {
+        // todo: send user back to the login page
         this.user$ = undefined;
-        sessionStorage.removeItem('jwttoken');
+        this.setToken(null);
     }
 
-    public isLoggedIn(): boolean
+    public isLoggedIn(): Observable<boolean>
     {
-        return sessionStorage.getItem('jwttoken') !== null;
+        return this.getUser().pipe(
+            map((v) =>
+            {
+                return v !== null;
+            }),
+        );
     }
 }

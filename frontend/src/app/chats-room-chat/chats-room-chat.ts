@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { ServiceMessages } from '../service-messages';
 import { ActivatedRoute } from '@angular/router';
@@ -7,9 +7,10 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
     selector: 'app-chats-room-chat',
-    imports: [ ReactiveFormsModule, AsyncPipe ],
     templateUrl: './chats-room-chat.html',
     styleUrl: './chats-room-chat.css',
+    changeDetection: ChangeDetectionStrategy.Eager,
+    imports: [ ReactiveFormsModule, AsyncPipe ],
     providers: [ ServiceMessages ],
 })
 export class ChatsRoomChat
@@ -53,7 +54,6 @@ export class ChatsRoomChat
         }
 
         this.messages.send(m).subscribe();
-
         this.form.controls.text.reset();
     }
 }

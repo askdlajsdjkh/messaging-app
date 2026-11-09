@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { ErrorMessages } from '../../lib/error-messages';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { HttpErrorResponse } from '@angular/common/http';
     selector: 'app-chats-room-join',
     imports: [ AsyncPipe, ReactiveFormsModule ],
     templateUrl: './chats-room-join.html',
+    changeDetection: ChangeDetectionStrategy.Eager,
     styleUrl: './chats-room-join.css',
 })
 export class ChatsRoomJoin
@@ -25,7 +26,7 @@ export class ChatsRoomJoin
     public readonly errlogs = new ErrorMessages();
 
 
-    public onSubmit()
+    public onSubmit() // todo
     {
         if (this.form.controls.chatID.invalid)
         {
@@ -40,22 +41,22 @@ export class ChatsRoomJoin
             return;
         }
 
-        this.chats.getChat(chatID).subscribe({
-            next: (v) =>
-            {
-                console.debug('Redirecting to the chat room...');
-                this.router.navigate([ 'chatsRoom', v.id ]);
+        // this.chats.getChat(chatID).subscribe({
+        //     next: (v) =>
+        //     {
+        //         console.debug('Redirecting to the chat room...');
+        //         this.router.navigate([ 'chatsRoom', v.id ]);
 
-                this.chats.updateChats();
-            },
-            error: (err) =>
-            {
-                console.error(err);
-                if (err instanceof HttpErrorResponse)
-                {
-                    this.errlogs.new(err.error.error);
-                }
-            },
-        });
+        //         this.chats.updateChats();
+        //     },
+        //     error: (err) =>
+        //     {
+        //         console.error(err);
+        //         if (err instanceof HttpErrorResponse)
+        //         {
+        //             this.errlogs.new(err.error.error);
+        //         }
+        //     },
+        // });
     }
 }
