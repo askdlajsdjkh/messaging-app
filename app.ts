@@ -167,15 +167,15 @@ app.post('/api/chat/create', async (req: JWTRequest, res) =>
         return;
     }
 
-    const chatID = await db.addNewChat(chat_name, owner);
-    if (chatID === null)
+    const chatId = await db.addNewChat(chat_name, owner);
+    if (chatId === null)
     {
         res.status(400).send({ error: 'Unable to create new chat.' });
         return;
     }
 
     res.json({
-        id: chatID,
+        id: chatId,
         name: chat_name,
         owner,
     });
